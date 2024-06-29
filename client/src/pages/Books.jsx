@@ -1,6 +1,24 @@
 import { Link } from "react-router-dom";
-import { books } from "../data/book";
+// import { books } from "../data/book";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 const Books = () => {
+  const [books, setBooks] = useState([]);
+
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/books`);
+      setBooks(response.data);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
+
   return (
     <div className="booksContainer">
       <div className="booksList">

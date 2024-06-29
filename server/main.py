@@ -1,6 +1,7 @@
 
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import os
 import shutil
@@ -18,6 +19,21 @@ UPLOAD_DIRECTORY = "uploaded_images"
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
 
+
+# Enable CORS
+origins = [
+    "http://localhost",
+    "http://localhost:5173",  # React development server
+    
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Dependency to get the database session
 def get_db():
     db = SessionLocal()
