@@ -6,7 +6,8 @@ class BookBase(BaseModel):
     author: str
     description: str
     genre : str
-    average_rating: float = None 
+    average_rating: float = None ,
+    image: str = None
 
 class BookCreate(BookBase):
     pass

@@ -10,5 +10,5 @@ class Book(Base):
     author = Column(String, index=True)
     description = Column(String, index=True)
     genre = Column(String, index=True)
-    image = Column(String, index=True)
+    image = Column(String, nullable=True)
     average_rating = Column(Float, nullable=True)

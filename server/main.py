@@ -1,13 +1,22 @@
-# main.py
-from fastapi import FastAPI, Depends, HTTPException
+
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List
+import os
+import shutil
 import books, models, schemas
 from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# Directory to save uploaded images
+UPLOAD_DIRECTORY = "uploaded_images"
+
+# Create the directory if it doesn't exist
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
 
 # Dependency to get the database session
 def get_db():
@@ -18,8 +27,28 @@ def get_db():
         db.close()
 
 @app.post("/books/", response_model=schemas.Book)
-def create_book(book: schemas.BookCreate, db: Session = Depends(get_db)):
-    return books.create_book(db=db, book=book)
+def create_book( 
+    title: str,
+    author: str,
+    description: str,
+    average_rating: float,
+    image: UploadFile = File(...),  # Image file
+    db: Session = Depends(get_db)
+):
+    # Save the image to the UPLOAD_DIRECTORY
+    image_path = os.path.join(UPLOAD_DIRECTORY, image.filename)
+    with open(image_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+
+    # Create the book with the image URL
+    book_data = {
+        "title": title,
+        "author": author,
+        "description": description,
+        "average_rating": average_rating,
+        "image": f"/images/{image.filename}"  # URL to access the image
+    }
+    return books.create_book(db=db, book=schemas.BookCreate(**book_data))
 
 @app.get("/books/", response_model=List[schemas.Book])
 def read_books(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
