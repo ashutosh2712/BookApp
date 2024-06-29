@@ -24,5 +24,14 @@ BookApp is a simple application to manage books with CRUD operations, allowing u
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/yourusername/BookApp.git
+git remote add origin https://github.com/ashutosh2712/BookApp.git
 cd BookApp
+ cd client
+  npm install
+  npm run dev
+ cd server
+  pipenv install
+  pipenv shell
+  uvicorn main:app --reload
+
+
